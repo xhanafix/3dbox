@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Box Shot Maker Pro</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>3D Box Shot Maker Pro</h1>
+        <p>Create professional 3D box shots for your products</p>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="preview-container">
+                <div id="canvas-container"></div>
+                <div class="camera-controls">
+                    <p>Camera Controls:</p>
+                    <ul>
+                        <li>Left click + drag to rotate</li>
+                        <li>Right click + drag to pan</li>
+                        <li>Scroll to zoom in/out</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="controls-container">
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Textures</h2>
+                        <div class="accordion-content">
+                            <div class="texture-control">
+                                <label for="front-texture">Front Cover</label>
+                                <input type="file" id="front-texture" accept="image/*">
+                                <div class="texture-preview" id="front-preview"></div>
+                            </div>
+                            <div class="texture-control">
+                                <label for="back-texture">Back Cover</label>
+                                <input type="file" id="back-texture" accept="image/*">
+                                <div class="texture-preview" id="back-preview"></div>
+                            </div>
+                            <div class="texture-control">
+                                <label for="top-texture">Top</label>
+                                <input type="file" id="top-texture" accept="image/*">
+                                <div class="texture-preview" id="top-preview"></div>
+                            </div>
+                            <div class="texture-control">
+                                <label for="left-texture">Left Side</label>
+                                <input type="file" id="left-texture" accept="image/*">
+                                <div class="texture-preview" id="left-preview"></div>
+                            </div>
+                            <div class="texture-control">
+                                <label for="right-texture">Right Side</label>
+                                <input type="file" id="right-texture" accept="image/*">
+                                <div class="texture-preview" id="right-preview"></div>
+                            </div>
+                            <div class="texture-control">
+                                <label for="bottom-texture">Bottom</label>
+                                <input type="file" id="bottom-texture" accept="image/*">
+                                <div class="texture-preview" id="bottom-preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Background</h2>
+                        <div class="accordion-content">
+                            <div class="control-group">
+                                <label for="bg-color">Background Color</label>
+                                <input type="color" id="bg-color" value="#ffffff">
+                            </div>
+                            <div class="control-group">
+                                <label for="bg-transparent">Transparent Background</label>
+                                <input type="checkbox" id="bg-transparent">
+                            </div>
+                            <div class="control-group">
+                                <label for="bg-image">Background Image</label>
+                                <input type="file" id="bg-image" accept="image/*">
+                                <div class="texture-preview" id="bg-preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Box Settings</h2>
+                        <div class="accordion-content">
+                            <div class="control-group">
+                                <h3>Material</h3>
+                                <label for="material-shininess">Shininess</label>
+                                <input type="range" id="material-shininess" min="0" max="100" step="1" value="30">
+                                <label for="shine-color">Shine Color</label>
+                                <input type="color" id="shine-color" value="#ffffff">
+                            </div>
+                            <div class="control-group">
+                                <h3>Size & Proportions</h3>
+                                <div class="unit-selection">
+                                    <label for="unit-select">Measurement Unit</label>
+                                    <select id="unit-select">
+                                        <option value="mm">Millimeters (mm)</option>
+                                        <option value="cm">Centimeters (cm)</option>
+                                        <option value="in">Inches (in)</option>
+                                    </select>
+                                </div>
+                                <label for="box-width">Width</label>
+                                <div class="range-with-value">
+                                    <input type="number" id="box-width-input" min="1" max="500" value="200" class="dimension-input">
+                                    <span class="unit-label">mm</span>
+                                </div>
+                                <label for="box-height">Height</label>
+                                <div class="range-with-value">
+                                    <input type="number" id="box-height-input" min="1" max="500" value="300" class="dimension-input">
+                                    <span class="unit-label">mm</span>
+                                </div>
+                                <label for="box-depth">Depth</label>
+                                <div class="range-with-value">
+                                    <input type="number" id="box-depth-input" min="1" max="500" value="50" class="dimension-input">
+                                    <span class="unit-label">mm</span>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <h3>Box Type</h3>
+                                <select id="box-type">
+                                    <option value="standard">Standard Box</option>
+                                    <option value="software">Software Box</option>
+                                    <option value="book">Book</option>
+                                    <option value="dvd">DVD Case</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <h3>Rounded Corners</h3>
+                                <label for="rounded-corners">Enable Rounded Corners</label>
+                                <input type="checkbox" id="rounded-corners">
+                                <label for="corner-radius">Corner Radius</label>
+                                <div class="range-with-value">
+                                    <input type="number" id="corner-radius-input" min="1" max="50" value="10" class="dimension-input" disabled>
+                                    <span class="unit-label">mm</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Lighting</h2>
+                        <div class="accordion-content">
+                            <div class="control-group">
+                                <h3>Ambient Light</h3>
+                                <label for="ambient-color">Color</label>
+                                <input type="color" id="ambient-color" value="#ffffff">
+                                <label for="ambient-intensity">Intensity</label>
+                                <input type="range" id="ambient-intensity" min="0" max="1" step="0.01" value="0.5">
+                            </div>
+                            <div class="control-group">
+                                <h3>Directional Light</h3>
+                                <label for="directional-color">Color</label>
+                                <input type="color" id="directional-color" value="#ffffff">
+                                <label for="directional-intensity">Intensity</label>
+                                <input type="range" id="directional-intensity" min="0" max="1" step="0.01" value="0.5">
+                                <label for="lock-light-position">Lock Position</label>
+                                <input type="checkbox" id="lock-light-position">
+                            </div>
+                            <div class="control-group">
+                                <h3>Point Light</h3>
+                                <label for="point-color">Color</label>
+                                <input type="color" id="point-color" value="#ffffff">
+                                <label for="point-intensity">Intensity</label>
+                                <input type="range" id="point-intensity" min="0" max="1" step="0.01" value="0.7">
+                                <label for="point-x">X Offset</label>
+                                <input type="range" id="point-x" min="-10" max="10" step="0.1" value="2">
+                                <label for="point-y">Y Offset</label>
+                                <input type="range" id="point-y" min="-10" max="10" step="0.1" value="3">
+                                <label for="point-z">Z Offset</label>
+                                <input type="range" id="point-z" min="-10" max="10" step="0.1" value="2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Camera</h2>
+                        <div class="accordion-content">
+                            <div class="control-group">
+                                <h3>Presets</h3>
+                                <select id="camera-preset">
+                                    <option value="front-right">Front Right</option>
+                                    <option value="front-left">Front Left</option>
+                                    <option value="back-right">Back Right</option>
+                                    <option value="back-left">Back Left</option>
+                                    <option value="front">Front</option>
+                                    <option value="back">Back</option>
+                                    <option value="top">Top</option>
+                                </select>
+                                <button id="apply-camera-preset">Apply Preset</button>
+                            </div>
+                            <div class="control-group">
+                                <h3>Camera Settings</h3>
+                                <label for="camera-fov">Field of View</label>
+                                <input type="range" id="camera-fov" min="10" max="100" step="1" value="45">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">Save Image</h2>
+                        <div class="accordion-content">
+                            <div class="control-group">
+                                <label for="image-width">Image Width</label>
+                                <input type="number" id="image-width" min="100" max="4000" step="1" value="1200">
+                                <label for="image-height">Image Height (Auto)</label>
+                                <input type="number" id="image-height" disabled>
+                            </div>
+                            <div class="control-group">
+                                <label for="image-quality">Image Quality</label>
+                                <select id="image-quality">
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <button id="generate-image" class="primary-button">Generate Image</button>
+                            </div>
+                            <div id="result-container" class="hidden">
+                                <h3>Your Box Shot</h3>
+                                <div id="result-image-container"></div>
+                                <p>Right-click on the image and select "Save Image As..." to download, or <a id="download-link" href="#" download="3d-box-shot.png">click here</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Made with ❤️ by xhanafix | <a href="https://github.com/xhanafix/3dbox" target="_blank">Source Code</a></p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html> 
